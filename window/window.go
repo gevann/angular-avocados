@@ -4,52 +4,65 @@ import (
 	"fmt"
 )
 
-type IntWindow struct {
-	Sum  int
-	Data []int
+// Generic Windower interface for generic data type T
+type Windower[T any] interface {
+	Len() int
+	String() string
+	Append(i T)
+	Remove()
+	Get(i uint) (T, error)
+	Last() (T, bool)
+	Reset()
+	Data() []T
 }
 
-func (w *IntWindow) Len() int {
-	return len(w.Data)
+type Window[T any] struct {
+	sum  int
+	data []T
 }
 
-func (w *IntWindow) String() string {
-	return fmt.Sprintf("%v", w.Data)
+func (w *Window[T]) Data() []T {
+	return w.data
 }
 
-func (w *IntWindow) Append(i int) {
-	w.Data = append(w.Data, i)
-	w.Sum += i
+func (w *Window[T]) Len() int {
+	return len(w.data)
 }
 
-func (w *IntWindow) Remove() {
-	datum := w.Data[0]
-	w.Data = w.Data[1:]
-	w.Sum -= datum
+func (w *Window[T]) String() string {
+	return fmt.Sprintf("%v", w.data)
 }
 
-func (w *IntWindow) Get(i uint) (int, error) {
+func (w *Window[T]) Append(i T) {
+	w.data = append(w.data, i)
+}
+
+func (w *Window[T]) Remove() {
+	w.data = w.data[1:]
+}
+
+func (w *Window[T]) Get(i uint) (T, error) {
 	if i > uint(w.Len()-1) {
-		return 0, fmt.Errorf("Index out of range")
+		var zeroValue T
+		return zeroValue, fmt.Errorf("Index out of range")
 	}
-	return w.Data[i], nil
+	return w.data[i], nil
 }
 
-func (w *IntWindow) Last() (int, bool) {
+func (w *Window[T]) Last() (T, bool) {
 	if w.Len() == 0 {
-		return 0, false
+		var zeroValue T
+		return zeroValue, false
 	}
-	return w.Data[w.Len()-1], true
+	return w.data[w.Len()-1], true
 }
 
-func (w *IntWindow) Reset() {
-	w.Sum = 0
-	w.Data = nil
+func (w *Window[T]) Reset() {
+	w.data = nil
 }
 
-func Window() *IntWindow {
-	return &IntWindow{
-		Sum:  0,
-		Data: []int{},
+func New[T any](data ...T) Windower[T] {
+	return &Window[T]{
+		data: data,
 	}
 }

@@ -7,9 +7,7 @@ import (
 
 func TestIntWindow_Len(t *testing.T) {
 	type fields struct {
-		length int
-		sum    int
-		data   []int
+		data []int
 	}
 	tests := []struct {
 		name   string
@@ -19,19 +17,14 @@ func TestIntWindow_Len(t *testing.T) {
 		{
 			name: "returns the correct length",
 			fields: fields{
-				length: 3,
-				sum:    6,
-				data:   []int{1, 2, 3},
+				data: []int{1, 2, 3},
 			},
 			want: 3,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.sum,
-				Data: tt.fields.data,
-			}
+			w := New(tt.fields.data...)
 			if got := w.Len(); got != tt.want {
 				t.Errorf("IntWindow.len() = %v, want %v", got, tt.want)
 			}
@@ -41,9 +34,7 @@ func TestIntWindow_Len(t *testing.T) {
 
 func TestIntWindow_String(t *testing.T) {
 	type fields struct {
-		length int
-		sum    int
-		data   []int
+		data []int
 	}
 	tests := []struct {
 		name   string
@@ -53,19 +44,14 @@ func TestIntWindow_String(t *testing.T) {
 		{
 			name: "prints the correct string",
 			fields: fields{
-				length: 3,
-				sum:    6,
-				data:   []int{1, 2, 3},
+				data: []int{1, 2, 3},
 			},
 			want: "[1 2 3]",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.sum,
-				Data: tt.fields.data,
-			}
+			w := New(tt.fields.data...)
 			if got := w.String(); got != tt.want {
 				t.Errorf("IntWindow.String() = %v, want %v", got, tt.want)
 			}
@@ -75,9 +61,7 @@ func TestIntWindow_String(t *testing.T) {
 
 func TestIntWindow_Append(t *testing.T) {
 	type fields struct {
-		length int
-		sum    int
-		data   []int
+		data []int
 	}
 	type args struct {
 		i int
@@ -90,27 +74,19 @@ func TestIntWindow_Append(t *testing.T) {
 		{
 			name: "appends the correct value",
 			fields: fields{
-				length: 2,
-				sum:    3,
-				data:   []int{1, 2},
+				data: []int{1, 2},
 			},
 			args: args{i: 3},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.sum,
-				Data: tt.fields.data,
-			}
+			w := New(tt.fields.data...)
 			w.Append(tt.args.i)
-			if len(w.Data) != 3 {
-				t.Errorf("IntWindow.append() data = %v, want %v", w.Data, []int{1, 2, 3})
+			if len(w.Data()) != 3 {
+				t.Errorf("IntWindow.append() data = %v, want %v", w.Data(), []int{1, 2, 3})
 			}
-			if w.Sum != 6 {
-				t.Errorf("IntWindow.append() sum = %v, want %v", w.Sum, 6)
-			}
-			last := w.Data[len(w.Data)-1]
+			last := w.Data()[len(w.Data())-1]
 			if last != tt.args.i {
 				t.Errorf("IntWindow.append() last = %v, want %v", last, tt.args.i)
 			}
@@ -121,9 +97,7 @@ func TestIntWindow_Append(t *testing.T) {
 
 func TestIntWindow_Remove(t *testing.T) {
 	type fields struct {
-		length int
-		sum    int
-		data   []int
+		data []int
 	}
 	tests := []struct {
 		name   string
@@ -132,24 +106,16 @@ func TestIntWindow_Remove(t *testing.T) {
 		{
 			name: "removes the first element",
 			fields: fields{
-				length: 1,
-				sum:    1,
-				data:   []int{1},
+				data: []int{1},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.sum,
-				Data: tt.fields.data,
-			}
+			w := New(tt.fields.data...)
 			w.Remove()
-			if len(w.Data) != 0 {
-				t.Errorf("IntWindow.remove() data = %v, want %v", w.Data, []int{})
-			}
-			if w.Sum != 0 {
-				t.Errorf("IntWindow.remove() sum = %v, want %v", w.Sum, 0)
+			if len(w.Data()) != 0 {
+				t.Errorf("IntWindow.remove() data = %v, want %v", w.Data(), []int{})
 			}
 		})
 	}
@@ -174,9 +140,7 @@ func TestIntWindow_Get(t *testing.T) {
 		{
 			name: "returns the correct value",
 			fields: fields{
-				length: 3,
-				sum:    6,
-				data:   []int{1, 2, 3},
+				data: []int{1, 2, 3},
 			},
 			args:    args{i: 1},
 			want:    2,
@@ -185,10 +149,7 @@ func TestIntWindow_Get(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.sum,
-				Data: tt.fields.data,
-			}
+			w := New(tt.fields.data...)
 			got, err := w.Get(tt.args.i)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("IntWindow.get() error = %v, wantErr %v", err, tt.wantErr)
@@ -201,23 +162,31 @@ func TestIntWindow_Get(t *testing.T) {
 	}
 }
 
-func TestWindow(t *testing.T) {
+func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
-		want *IntWindow
+		args []int
+		want *Window[int]
 	}{
 		{
 			name: "creates a new window with default values",
-			want: &IntWindow{
-				Sum:  0,
-				Data: []int{},
+			args: []int{},
+			want: &Window[int]{
+				data: []int{},
+			},
+		},
+		{
+			name: "creates a new window with the given values",
+			args: []int{1, 2, 3},
+			want: &Window[int]{
+				data: []int{1, 2, 3},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Window(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Window() = %v, want %v", got, tt.want)
+			if got := New(tt.args...); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -225,9 +194,7 @@ func TestWindow(t *testing.T) {
 
 func TestIntWindow_Last(t *testing.T) {
 	type fields struct {
-		length int
-		Sum    int
-		Data   []int
+		data []int
 	}
 	tests := []struct {
 		name   string
@@ -238,9 +205,7 @@ func TestIntWindow_Last(t *testing.T) {
 		{
 			name: "returns the last element",
 			fields: fields{
-				length: 5,
-				Sum:    15,
-				Data:   []int{1, 2, 3, 4, 5},
+				data: []int{1, 2, 3, 4, 5},
 			},
 			want:   5,
 			wantOk: true,
@@ -248,9 +213,7 @@ func TestIntWindow_Last(t *testing.T) {
 		{
 			name: "returns zero if the window is empty",
 			fields: fields{
-				length: 0,
-				Sum:    0,
-				Data:   []int{},
+				data: []int{},
 			},
 			want:   0,
 			wantOk: false,
@@ -258,10 +221,7 @@ func TestIntWindow_Last(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.Sum,
-				Data: tt.fields.Data,
-			}
+			w := New(tt.fields.data...)
 			got, gotOk := w.Last()
 			if got != tt.want {
 				t.Errorf("IntWindow.Last() got = %v, want %v", got, tt.want)
@@ -275,9 +235,7 @@ func TestIntWindow_Last(t *testing.T) {
 
 func TestIntWindow_Reset(t *testing.T) {
 	type fields struct {
-		length int
-		Sum    int
-		Data   []int
+		data []int
 	}
 	tests := []struct {
 		name   string
@@ -286,21 +244,16 @@ func TestIntWindow_Reset(t *testing.T) {
 		{
 			name: "resets the window",
 			fields: fields{
-				length: 5,
-				Sum:    15,
-				Data:   []int{1, 2, 3, 4, 5},
+				data: []int{1, 2, 3, 4, 5},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			w := &IntWindow{
-				Sum:  tt.fields.Sum,
-				Data: tt.fields.Data,
-			}
+			w := New(tt.fields.data...)
 			w.Reset()
-			if len(w.Data) != 0 {
-				t.Errorf("IntWindow.reset() data = %v, want %v", w.Data, []int{})
+			if len(w.Data()) != 0 {
+				t.Errorf("IntWindow.reset() data = %v, want %v", w.Data(), []int{})
 			}
 		})
 	}

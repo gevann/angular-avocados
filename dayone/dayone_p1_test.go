@@ -59,7 +59,6 @@ func TestGenerator(t *testing.T) {
 		args args
 		want [][]int
 	}{
-		// TODO: Add test cases.
 		{"returns windows with the correct Data", args{strings.NewReader(partialInput)}, [][]int{
 			{199, 200},
 			{200, 208},
@@ -77,7 +76,7 @@ func TestGenerator(t *testing.T) {
 			generator := generator(tt.args.r, 2)
 			for _, want := range tt.want {
 				got := <-generator
-				if !reflect.DeepEqual(got.Data, want) {
+				if !reflect.DeepEqual(got.Data(), want) {
 					t.Errorf("Generator() = %v, want %v", got, want)
 				}
 			}
@@ -87,7 +86,7 @@ func TestGenerator(t *testing.T) {
 
 func Test_increases(t *testing.T) {
 	type args struct {
-		ch <-chan window.IntWindow
+		ch <-chan window.Windower[int]
 	}
 	tests := []struct {
 		name string
@@ -107,7 +106,7 @@ func Test_increases(t *testing.T) {
 
 func Test_lastGreaterThanFirst(t *testing.T) {
 	type args struct {
-		w window.IntWindow
+		w window.Windower[int]
 	}
 	tests := []struct {
 		name string
@@ -116,12 +115,12 @@ func Test_lastGreaterThanFirst(t *testing.T) {
 	}{
 		{
 			"returns true when the last element is greater than the first",
-			args{window.IntWindow{Data: []int{1, 2, 3}}},
+			args{window.New(1, 2, 3)},
 			true,
 		},
 		{
 			"returns false when the last element is not greater than the first",
-			args{window.IntWindow{Data: []int{1, 2, 1}}},
+			args{window.New(1, 2, 1)},
 			false,
 		},
 	}
