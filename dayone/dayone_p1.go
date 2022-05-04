@@ -3,7 +3,6 @@ package dayone
 import (
 	"angular-avocados/window"
 	"bufio"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -88,6 +87,5 @@ func PartOne(filePath string) int {
 	}
 	ch := generator(file, 2)
 	increases := increases(ch, lastGreaterThanFirst)
-	fmt.Println(increases)
 	return increases
 }

@@ -50,7 +50,7 @@ func Test_parse(t *testing.T) {
 	}
 }
 
-func TestGenerator(t *testing.T) {
+func Test_generator(t *testing.T) {
 	type args struct {
 		r io.Reader
 	}
