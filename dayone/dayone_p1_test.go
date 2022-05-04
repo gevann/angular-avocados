@@ -1,6 +1,7 @@
 package dayone
 
 import (
+	"angular-avocados/window"
 	"io"
 	"reflect"
 	"strings"
@@ -56,17 +57,27 @@ func TestGenerator(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []IntTuple
+		want [][]int
 	}{
 		// TODO: Add test cases.
-		{"first", args{strings.NewReader(partialInput)}, []IntTuple{{199, 200}, {200, 208}, {208, 210}, {210, 200}, {200, 207}, {207, 240}, {240, 269}, {269, 260}, {260, 263}}},
+		{"returns windows with the correct Data", args{strings.NewReader(partialInput)}, [][]int{
+			{199, 200},
+			{200, 208},
+			{208, 210},
+			{210, 200},
+			{200, 207},
+			{207, 240},
+			{240, 269},
+			{269, 260},
+			{260, 263},
+		}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			generator := generator(tt.args.r)
+			generator := generator(tt.args.r, 2)
 			for _, want := range tt.want {
 				got := <-generator
-				if !reflect.DeepEqual(got, want) {
+				if !reflect.DeepEqual(got.Data, want) {
 					t.Errorf("Generator() = %v, want %v", got, want)
 				}
 			}
@@ -76,20 +87,48 @@ func TestGenerator(t *testing.T) {
 
 func Test_increases(t *testing.T) {
 	type args struct {
-		ch <-chan IntTuple
+		ch <-chan window.IntWindow
 	}
 	tests := []struct {
 		name string
 		args args
 		want int
 	}{
-		// TODO: Add test cases.
-		{"partial", args{generator(strings.NewReader(partialInput))}, 7},
+		{"partial", args{generator(strings.NewReader(partialInput), 2)}, 7},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := increases(tt.args.ch); got != tt.want {
+			if got := increases(tt.args.ch, lastGreaterThanFirst); got != tt.want {
 				t.Errorf("increases() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_lastGreaterThanFirst(t *testing.T) {
+	type args struct {
+		w window.IntWindow
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"returns true when the last element is greater than the first",
+			args{window.IntWindow{Data: []int{1, 2, 3}}},
+			true,
+		},
+		{
+			"returns false when the last element is not greater than the first",
+			args{window.IntWindow{Data: []int{1, 2, 1}}},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := lastGreaterThanFirst(tt.args.w); got != tt.want {
+				t.Errorf("lastGreaterThanFirst() = %v, want %v", got, tt.want)
 			}
 		})
 	}

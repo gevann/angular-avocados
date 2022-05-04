@@ -1,6 +1,7 @@
 package dayone
 
 import (
+	"angular-avocados/window"
 	"bufio"
 	"fmt"
 	"io"
@@ -9,59 +10,84 @@ import (
 	"strings"
 )
 
-type IntTuple struct {
-	A int
-	B int
-}
-
 func parse(s string) (int, error) {
 	i, e := strconv.Atoi(strings.Trim(s, " \t\r\n,"))
 	return i, e
 }
 
-func generator(r io.Reader) <-chan IntTuple { // returns receive-only channel
+func generator(r io.Reader, windowLen uint) <-chan window.IntWindow { // returns receive-only channel
 	scanner := bufio.NewScanner(r)
-	scanner.Scan()
-	ch := make(chan IntTuple)
-
-	init := scanner.Text()
-	a, err := parse(init)
-	if err != nil {
-		panic("Could not parse initial value")
-	}
+	ch := make(chan window.IntWindow)
 
 	go func() { // anonymous goroutine
-		for scanner.Scan() {
-			b, err := parse(scanner.Text())
+		defer close(ch)
+		windowPrev := window.Window()
+		windowCurr := window.Window()
+
+		// iterate windowLen times
+		for i := uint(0); i < windowLen; i++ {
+			scanner.Scan()
+			datum, err := parse(scanner.Text())
 			if err != nil {
-				panic("Could not value")
+				panic(err)
 			}
-			tuple := IntTuple{a, b} // create a tuple
-			ch <- tuple             // send tuple to channel
-			a = b                   // update a
+			windowPrev.Append(datum)
 		}
-		close(ch) // close channel
+
+		ch <- *windowPrev
+
+		for scanner.Scan() {
+			i, err := parse(scanner.Text())
+			if err != nil {
+				panic(err)
+			}
+			for _, datum := range windowPrev.Data[1:] {
+				windowCurr.Append(datum)
+			}
+
+			windowCurr.Append(i)
+			if windowCurr.Len() == int(windowLen) {
+				ch <- *windowCurr
+				windowPrev = windowCurr
+				windowCurr = window.Window()
+			} else {
+				break
+			}
+		}
 	}()
 	return ch
 }
 
-func increases(ch <-chan IntTuple) int {
+func increases(ch <-chan window.IntWindow, comparator func(w window.IntWindow) bool) int {
 	count := 0
-	for tuple := range ch {
-		if tuple.A < tuple.B {
+	for window := range ch {
+		if comparator(window) {
 			count++
 		}
 	}
 	return count
 }
 
-func Main(filePath string) int {
+func lastGreaterThanFirst(w window.IntWindow) bool {
+	first, err := w.Get(0)
+	if err != nil {
+		panic(err)
+	}
+	if last, ok := w.Last(); ok {
+		if last > first {
+			return true
+		}
+	}
+	return false
+}
+
+func PartOne(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
 	}
-	ch := generator(file)
-	increases := increases(ch)
+	ch := generator(file, 2)
+	increases := increases(ch, lastGreaterThanFirst)
 	fmt.Println(increases)
 	return increases
-} // end main
+}

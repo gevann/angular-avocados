@@ -14,6 +14,6 @@ func recovery() {
 
 func main() {
 	defer recovery()
-	dayone.Main("dayone/d1p1_input.partial.txt")
-	dayone.Main("dayone/d1p1_input.full.txt")
+	dayone.PartOne("dayone/d1p1_input.partial.txt")
+	dayone.PartOne("dayone/d1p1_input.full.txt")
 } // end main
