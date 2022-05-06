@@ -80,12 +80,12 @@ func lastGreaterThanFirst(w window.Windower[int]) bool {
 	return false
 }
 
-func PartOne(filePath string) int {
+func PartOne(filePath string) (int, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	ch := generator(file, 2)
 	increases := increases(ch, lastGreaterThanFirst)
-	return increases
+	return increases, nil
 }

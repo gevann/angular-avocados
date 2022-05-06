@@ -29,13 +29,13 @@ func sumGenerator(chIn <-chan window.Windower[int]) <-chan window.Windower[int] 
 	return chOut
 }
 
-func PartTwo(filePath string) int {
+func PartTwo(filePath string) (int, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	windowLen := uint(3)
 	ch := sumGenerator(generator(file, windowLen))
 	increases := increases(ch, lastGreaterThanFirst)
-	return increases
+	return increases, nil
 }
