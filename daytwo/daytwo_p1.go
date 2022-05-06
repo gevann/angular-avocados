@@ -123,3 +123,33 @@ func PartOne(filename string) (int, error) {
 
 	return product, nil
 }
+
+func PartTwo(filename string) (int, error) {
+	ch, err := channelInstructions(filename)
+	if err != nil {
+		return 0, err
+	}
+
+	horizontal, depth, aim := 0, 0, 0
+
+	for instruction := range ch {
+		if instruction.Error != nil {
+			return 0, instruction.Error
+		}
+		switch instruction.Data.opCode {
+		case down:
+			aim += int(instruction.Data.value)
+		case up:
+			aim -= int(instruction.Data.value)
+		case forward:
+			horizontal += int(instruction.Data.value)
+			depth += aim * int(instruction.Data.value)
+		default:
+			return 0, fmt.Errorf("Unknown opcode: %d", instruction.Data.opCode)
+		}
+	}
+
+	product := horizontal * depth
+
+	return product, nil
+}

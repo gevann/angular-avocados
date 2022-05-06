@@ -50,16 +50,19 @@ func print[T interface{}](day uint8, args []printable[T]) {
 func main() {
 	defer recovery()
 	wg.Add(2)
+	fmt.Printf("\n\n~~~~~~~~~~~ Advent of Code 2021 ~~~~~~~~~~~~\n")
 	go print(1, []printable[int]{
 		{1, "dayone/d1p1_input.partial.txt", dayone.PartOne},
-		{2, "dayone/d1p1_input.full.txt", dayone.PartOne},
-		{1, "dayone/d1p1_input.partial.txt", dayone.PartTwo},
+		{1, "dayone/d1p1_input.full.txt", dayone.PartOne},
+		{2, "dayone/d1p1_input.partial.txt", dayone.PartTwo},
 		{2, "dayone/d1p1_input.full.txt", dayone.PartTwo},
 	})
 
 	go print(2, []printable[int]{
 		{1, "daytwo/d2p1_input.partial.txt", daytwo.PartOne},
 		{1, "daytwo/d2p1_input.full.txt", daytwo.PartOne},
+		{2, "daytwo/d2p1_input.partial.txt", daytwo.PartTwo},
+		{2, "daytwo/d2p1_input.full.txt", daytwo.PartTwo},
 	})
 	wg.Wait()
 }
