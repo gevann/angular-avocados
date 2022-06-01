@@ -9,7 +9,6 @@ func TestTree_ToString(t *testing.T) {
 		rightChild *Tree
 		leftChild  *Tree
 		parent     *Tree
-		height     int
 		value      string
 	}
 	tests := []struct {
@@ -20,10 +19,9 @@ func TestTree_ToString(t *testing.T) {
 		{
 			name: "It prints a string representation of the node",
 			fields: fields{
-				value:  "01010",
-				height: 1,
+				value: "01010",
 			},
-			want: "[01010 | h: 1]",
+			want: "[data: 01010 | leaves: 0 | height: 0]",
 		},
 	}
 	for _, tt := range tests {
@@ -64,9 +62,14 @@ func TestTree_Insert(t *testing.T) {
 	}
 
 	wantedMaxByLeafCount := "10111"
+	wantedMinByLeafCount := "01010"
 
 	if tree.MaxByLeafCount().value != wantedMaxByLeafCount {
 		t.Errorf("Tree.MaxByLeafCount() = %v, want %v", tree.MaxByLeafCount().value, wantedMaxByLeafCount)
+	}
+
+	if tree.MinByLeafCount().value != wantedMinByLeafCount {
+		t.Errorf("Tree.MinByLeafCount() = %v, want %v", tree.MinByLeafCount().value, wantedMinByLeafCount)
 	}
 
 	wantedLeafCount := 12

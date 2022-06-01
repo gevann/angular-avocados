@@ -14,6 +14,20 @@ type Tree struct {
 	value     string
 }
 
+func (tree *Tree) GetLeafCount() int {
+	var zeroValue int
+
+	if tree == nil {
+		return 0
+	}
+
+	if tree.leafCount == zeroValue {
+		return 0
+	}
+
+	return tree.leafCount
+}
+
 func (tree *Tree) Insert(value string) *Tree {
 	return insert(value, 0, tree, tree)
 }
@@ -34,6 +48,22 @@ func (tree *Tree) NextByLeafCount() *Tree {
 	return next
 }
 
+func (tree *Tree) nextByMinLeafCount() *Tree {
+	var next *Tree
+
+	if tree.leftChild == nil {
+		return tree.rightChild
+	} else {
+		next = tree.leftChild
+	}
+
+	if tree.rightChild != nil && tree.rightChild.GetLeafCount() < next.GetLeafCount() {
+		next = tree.rightChild
+	}
+
+	return next
+}
+
 func (tree *Tree) MaxByLeafCount() *Tree {
 	curr := tree
 	next := tree
@@ -42,6 +72,17 @@ func (tree *Tree) MaxByLeafCount() *Tree {
 		curr = next
 		next = next.NextByLeafCount()
 		curr.NextByLeafCount()
+	}
+	return curr
+}
+
+func (tree *Tree) MinByLeafCount() *Tree {
+	curr := tree
+	next := tree
+
+	for next != nil {
+		curr = next
+		next = curr.nextByMinLeafCount()
 	}
 	return curr
 }
