@@ -30,7 +30,7 @@ func TestTree_ToString(t *testing.T) {
 				rightChild: tt.fields.rightChild,
 				leftChild:  tt.fields.leftChild,
 				parent:     tt.fields.parent,
-				value:      tt.fields.value,
+				Value:      tt.fields.value,
 			}
 			if got := tree.ToString(); got != tt.want {
 				t.Errorf("Tree.ToString() = %v, want %v", got, tt.want)
@@ -64,12 +64,12 @@ func TestTree_Insert(t *testing.T) {
 	wantedMaxByLeafCount := "10111"
 	wantedMinByLeafCount := "01010"
 
-	if tree.MaxByLeafCount().value != wantedMaxByLeafCount {
-		t.Errorf("Tree.MaxByLeafCount() = %v, want %v", tree.MaxByLeafCount().value, wantedMaxByLeafCount)
+	if tree.MaxByLeafCount().Value != wantedMaxByLeafCount {
+		t.Errorf("Tree.MaxByLeafCount() = %v, want %v", tree.MaxByLeafCount().Value, wantedMaxByLeafCount)
 	}
 
-	if tree.MinByLeafCount().value != wantedMinByLeafCount {
-		t.Errorf("Tree.MinByLeafCount() = %v, want %v", tree.MinByLeafCount().value, wantedMinByLeafCount)
+	if tree.MinByLeafCount().Value != wantedMinByLeafCount {
+		t.Errorf("Tree.MinByLeafCount() = %v, want %v", tree.MinByLeafCount().Value, wantedMinByLeafCount)
 	}
 
 	wantedLeafCount := 12

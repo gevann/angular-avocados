@@ -1,6 +1,7 @@
 package daythree
 
 import (
+	"angular-avocados/tree"
 	"bufio"
 	"errors"
 	"os"
@@ -120,6 +121,34 @@ func PartOne(filename string) (int, error) {
 		return zeroValue, e
 	}
 	y, e := strconv.ParseInt(aNaught, 2, 64)
+	if e != nil {
+		return zeroValue, e
+	}
+
+	return int(x * y), nil
+}
+
+func PartTwo(filename string) (int, error) {
+	var zeroValue int
+	ch, err := parseInput(filename)
+	if err != nil {
+		return zeroValue, err
+	}
+
+	tree := &tree.Tree{}
+
+	for binaryStr := range ch {
+		tree.Insert(binaryStr)
+	}
+
+	a := tree.MaxByLeafCount()
+	aNaught := tree.MinByLeafCount()
+
+	x, e := strconv.ParseInt(a.Value, 2, 64)
+	if e != nil {
+		return zeroValue, e
+	}
+	y, e := strconv.ParseInt(aNaught.Value, 2, 64)
 	if e != nil {
 		return zeroValue, e
 	}

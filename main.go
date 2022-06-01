@@ -90,5 +90,7 @@ func dayThree() {
 	print(3, []printable[int]{
 		{1, "daythree/input.partial.txt", daythree.PartOne},
 		{1, "daythree/input.full.txt", daythree.PartOne},
+		{2, "daythree/input.partial.txt", daythree.PartTwo},
+		{2, "daythree/input.full.txt", daythree.PartTwo},
 	})
 }

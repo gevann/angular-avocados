@@ -11,7 +11,7 @@ type Tree struct {
 
 	height    int
 	leafCount int
-	value     string
+	Value     string
 }
 
 func (tree *Tree) GetLeafCount() int {
@@ -97,8 +97,8 @@ func (tree *Tree) BreadthFirst() []string {
 		node := queue[0]
 		queue = queue[1:]
 
-		if node.value != emptyValue {
-			result = append(result, node.value)
+		if node.Value != emptyValue {
+			result = append(result, node.Value)
 		}
 
 		for _, child := range []*Tree{node.leftChild, node.rightChild} {
@@ -112,7 +112,7 @@ func (tree *Tree) BreadthFirst() []string {
 }
 
 func (tree *Tree) ToString() string {
-	value := tree.value
+	value := tree.Value
 	if value == "" {
 		value = "nil"
 	}
@@ -159,7 +159,7 @@ func insert(value string, index int, tree *Tree, root *Tree) *Tree {
 	tree.leafCount++
 	// Base case: if we are on the last character of the binary string, we are at the node to insert.
 	if index == len(value) {
-		tree.value = value
+		tree.Value = value
 		tree.leafCount = 0
 		return root
 	}
